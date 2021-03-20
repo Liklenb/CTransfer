@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import filedialog
 import socket
 import threading
+import os
 import tools
 
 
@@ -89,10 +90,14 @@ Vérifiez vôtre connexion internet puis réessayez.""")
         send_frame.itemconfigure(send_error, text="""Veuillez entrez un code valable.
 Le code doit être fournit par le réceptionneur.""")
 
-    if response == "Valider":
-        start_upload()
-    else:
-        show_menu()
+    try:
+        if response == "Valider":
+            start_upload()
+        else:
+            show_menu()
+    except NameError:
+        wait_for_response_frame.pack_forget()
+        send_frame.pack()
 
 
 def start_download():
@@ -139,7 +144,11 @@ def start_thread_download():
 root = tkinter.Tk()
 root.title("CTransfer")
 root.resizable(width=0, height=0)
-root.iconbitmap("textures/icon.ico")
+if os.name == "posix":
+    logo = tkinter.PhotoImage("textures/send.png")
+    root.tk.call('wm', 'iconphoto', root._w, logo)
+else:
+    root.iconbitmap("textures/icon.ico")
 
 file_path = ""
 file_name = ""
@@ -215,7 +224,6 @@ start_download_frame.create_text(250, 275, text="Téléchargement en cours...", 
 start_upload_frame = tkinter.Canvas(root, width=500, height=300)
 start_upload_frame.create_image(250, 120, image=big_send_image)
 start_upload_frame.create_text(250, 275, text="Envoi en cours...", justify="center")
-
 
 wait_for_response_frame = tkinter.Canvas(root, width=500, height=300)
 wait_for_response_frame.create_text(250, 100, text="En attente de validation...", font=("Arial", 25))
