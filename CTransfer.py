@@ -185,7 +185,11 @@ recv_frame = tkinter.Canvas(root, width=500, height=300)
 recv_return_button = ttk.Button(recv_frame, text="Retour", command=show_menu)
 recv_frame.create_window(10, 10, window=recv_return_button, anchor="nw")
 
-ip = socket.gethostbyname(socket.gethostname())
+if os.name == "posx":
+    ip = [(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in
+          [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]
+else:
+    ip = socket.gethostbyname(socket.gethostname())
 
 recv_frame.create_text(250, 75, text="Donnez le code suivant à l'envoyeur :", font=("Arial", 20))
 recv_frame.create_text(250, 150, text=ip[8:], font=("Arial", 50))
